@@ -1,0 +1,42 @@
+// References are editorial: only items that help explain an action or mechanic.
+(() => {
+  const ids=list=>new Set(list.map(id=>id.includes(':')?id:'dimensionalfluxminer:'+id));
+  window.DFM_REFERENCE_POLICY=Object.fromEntries(Object.entries({
+    'start.welcome':['mechanical_crusher','alloy_smelter'],
+    'start.path':['mechanical_crusher','alloy_smelter','minecraft:iron_ingot','minecraft:coal','minecraft:calcite','ingot_steel','ender_eye_reinforced'],
+    'materials.steel':['ingot_steel','alloy_smelter','dust_iron','dust_coal','grain_calcite','slag'],
+    'materials.slag':['slag','slag_aggregate','alloy_smelter','ingot_steel'],
+    'materials.parts':['quantum_core','miner_terminal'],
+    'materials.dusts':['mechanical_crusher'],
+    'crusher.ores':['efficiency_upgrade'],
+    'crusher.dusts':['minecraft:coal','minecraft:calcite','ingot_steel'],
+    'smelter.modes':['slag','ingot_steel'],
+    'smelter.bulk':['efficiency_upgrade'],
+    'smelter.xp':['liquid_experience'],
+    'smelter.xp_pipes':['liquid_experience'],
+    'smelter.multiply':['mechanical_crusher','alloy_smelter','minecraft:iron_ingot','minecraft:gold_ingot','minecraft:copper_ingot'],
+    'assembly.layers':['dimensional_port','steel_chassis','miner_terminal','quantum_core','reinforced_structural_glass','ventilation_unit'],
+    'assembly.front':['miner_terminal','stabilized_dimensional_core'],
+    'assembly.build':['miner_terminal'],
+    'miner.matter':['minecraft:obsidian'],
+    'miner.matter_ores':['minecraft:diamond','minecraft:emerald','minecraft:ancient_debris'],
+    'miner.matter_upgrade':['efficiency_upgrade'],
+    'miner.terminal':['miner_terminal'],
+    'miner.filter':['efficiency_upgrade'],
+    'automation.colors':['liquid_experience'],
+    'automation.auto':['liquid_experience'],
+    'automation.cables':['stabilized_dimensional_core'],
+    'dimensions.overworld':['basic_dimensional_core','stabilized_dimensional_core'],
+    'dimensions.nether':['stabilized_dimensional_core'],
+    'dimensions.end':['stabilized_dimensional_core','minecraft:end_stone','minecraft:purpur_block'],
+    'dimensions.egg':['minecraft:dragon_egg'],
+    'dimensions.barren':['basic_dimensional_core'],
+    'dimensions.ores':['minecraft:diamond_ore','minecraft:quartz'],
+    'dimensions.obsidian':['minecraft:obsidian'],
+    'rates.miner_note':['efficiency_upgrade'],
+    'rates.upgrade':['mechanical_crusher','alloy_smelter'],
+    'blight.terrain':['corrupted_terracotta','corrupted_sediment'],
+    'blight.creatures':['corrupted_water'],
+    'blight.avoid':['stabilized_dimensional_core']
+  }).map(([key,list])=>[key,ids(list)]));
+})();

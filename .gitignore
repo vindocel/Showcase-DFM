@@ -1,0 +1,8 @@
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.log
+_site/
+*.tmp
+
+i18n/locales.js
