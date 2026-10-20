@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
-      - run: node --test tests/i18n.test.mjs tests/public-project-data.test.cjs
+      - run: node --test tests/i18n.test.mjs tests/public-project-data.test.cjs tests/tank-fluids.test.cjs
       - run: node scripts/build-i18n.mjs --site
       - uses: actions/upload-pages-artifact@v3
         with:

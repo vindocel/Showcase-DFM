@@ -7,6 +7,7 @@ Uma vitrine interativa para conhecer o **Dimensional Flux Miner** antes de entra
 ## A experiência
 
 - **Catálogo 3D:** explore os blocos, gire os modelos e alterne os estados das máquinas para observar seu funcionamento.
+- **Tanques dimensionais:** conheça o tanque simples e o duplo, seus canais entre dimensões e a automação de líquidos.
 - **Guia completo:** consulte materiais, receitas, progressão, dimensões e configurações em uma página dedicada.
 - **Montagem visual:** veja a posição de cada bloco nas estruturas das máquinas em 3D.
 - **Detalhes dos itens:** ícones, texturas animadas e dicas ajudam a reconhecer os materiais durante a leitura.

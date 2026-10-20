@@ -2,6 +2,9 @@
 (() => {
   const ids=list=>new Set(list.map(id=>id.includes(':')?id:'dimensionalfluxminer:'+id));
   window.DFM_REFERENCE_POLICY=Object.fromEntries(Object.entries({
+    'tanks.about':['dimensional_tank'],
+    'tanks.dual':['dimensional_dual_tank'],
+    'tanks.personal':['minecraft:diamond'],
     'start.welcome':['mechanical_crusher','alloy_smelter'],
     'start.path':['mechanical_crusher','alloy_smelter','minecraft:iron_ingot','minecraft:coal','minecraft:calcite','ingot_steel','ender_eye_reinforced'],
     'materials.steel':['ingot_steel','alloy_smelter','dust_iron','dust_coal','grain_calcite','slag'],

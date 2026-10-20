@@ -16,11 +16,11 @@ Cada idioma tem um arquivo JSON nesta pasta. O inglês (`en.json`) é a base e o
 }
 ```
 
-3. Traduza os valores de `messages`, mantendo todas as chaves. O arquivo concentra navegação, controles, descrições dos 19 modelos, os 11 capítulos completos, receitas, materiais, tabelas, acessibilidade e mensagens.
+3. Traduza os valores de `messages`, mantendo todas as chaves. O arquivo concentra navegação, controles, descrições dos 21 modelos, os 12 capítulos completos, receitas, materiais, tabelas, acessibilidade e mensagens.
 4. Preserve os marcadores `{name}`, `{count}`, `{layer}`, etc. As formas plurais são objetos com `one` e `other`; podem ser adicionadas `zero`, `two`, `few` e `many`, conforme as regras de `Intl.PluralRules` do idioma.
 5. Preserve os códigos Minecraft `§b`, `§r` etc., que indicam cores e estilos nos textos do guia.
 6. Em `references.aliases`, mantenha os IDs e traduza as palavras dos arrays. São sinônimos usados para reconhecer itens nos textos. Em `excludedAliases`, traduza os termos genéricos que não devem receber dicas. Os nomes traduzidos dos itens também são reconhecidos automaticamente.
-7. Rode `node scripts/build-i18n.mjs` e `node --test tests/i18n.test.mjs tests/public-project-data.test.cjs`.
+7. Rode `node scripts/build-i18n.mjs` e `node --test tests/i18n.test.mjs tests/public-project-data.test.cjs tests/tank-fluids.test.cjs`.
 8. Confira `index.html?lang=es` e `guia.html?lang=es`, e envie um pull request contendo `i18n/es.json`.
 
 **Nenhuma alteração em JavaScript, HTML, menu ou lista de idiomas é necessária.** Após o merge na branch padrão, o workflow descobre todos os JSONs, valida os arquivos, gera o catálogo de idiomas e publica o site. O novo idioma aparece automaticamente no seletor.

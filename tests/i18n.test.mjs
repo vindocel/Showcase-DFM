@@ -56,8 +56,8 @@ test('localized catalog and guide have no unresolved text tokens',async()=>{
   for(const lang of ['en','pt']){
     const context=runtime({en,pt},'?lang='+lang);
     for(const file of ['assets.js','guide-data.js','guide-references.js','localize-data.js'])vm.runInNewContext(await readFile(new URL(file,root),'utf8'),context);
-    assert.equal(context.window.DFM_DATA.catalog.length,19);
-    assert.equal(context.window.DFM_GUIDE.chapters.length,11);
+    assert.equal(context.window.DFM_DATA.catalog.length,21);
+    assert.equal(context.window.DFM_GUIDE.chapters.length,12);
     assert.equal(context.window.DFM_GUIDE.chapters[0].title,lang==='en'?'Introduction':'Introdução');
     assert.ok(!JSON.stringify(context.window.DFM_DATA.catalog).includes('i18n:'));
     assert.ok(!JSON.stringify(context.window.DFM_GUIDE).includes('i18n:'));
@@ -69,4 +69,31 @@ test('published HTML contains default English text and localized accessibility a
   assert.ok(output.includes('aria-label="Choose language"'));
   assert.ok(output.includes('Industry beyond'));
   assert.ok(!output.includes('i18n:ui.explore_the_mod--><!--/i18n-->'));
+});
+
+
+test('dimensional tanks have self-contained 3D assets, localized names and guide recipes', async()=>{
+  const context=runtime({en,pt},'?lang=pt');
+  for(const file of ['assets.js','guide-data.js','guide-references.js','localize-data.js'])vm.runInNewContext(await readFile(new URL(file,root),'utf8'),context);
+  const data=context.window.DFM_DATA,guide=context.window.DFM_GUIDE;
+  const chapter=guide.chapters.find(c=>c.id==='tanks');
+  assert.ok(chapter);assert.equal(chapter.blocks.filter(b=>b.type==='recipe').length,2);
+  for(const [id,name] of [['dimensional_tank','Tanque Dimensional'],['dimensional_dual_tank','Tanque Dimensional Duplo']]){
+    const asset=data.catalog.find(a=>a.id===id);
+    assert.equal(asset.name,name);assert.equal(asset.guide,'tanks');
+    const geometry=data.geometries[asset.models.normal];
+    assert.ok(geometry.meshes.length>0);
+    assert.ok(Object.values(geometry.materials).some(id=>id.endsWith('/structural_glass')));
+    for(const mesh of geometry.meshes){
+      assert.equal(mesh.p.length,mesh.n.length);assert.equal(mesh.p.length/3,mesh.uv.length/2);
+      assert.ok(mesh.p.every(Number.isFinite));
+      assert.match(data.textures[geometry.materials[mesh.tex]].src,/^data:image\/png;base64,/);
+    }
+    assert.equal(guide.names['dimensionalfluxminer:'+id],name);
+    assert.equal(guide.recipes[id].result.id,'dimensionalfluxminer:'+id);
+    assert.ok(chapter.blocks.some(b=>b.type==='recipe'&&b.id===id));
+  }
+  assert.equal(guide.recipes.dimensional_dual_tank.pattern.join(''),'ESETCTESE');
+  assert.match(pt.messages['guide.dimensionalfluxminer.tanks.dual'],/128 000/);
+  assert.match(en.messages['guide.dimensionalfluxminer.tanks.dual'],/128/);
 });

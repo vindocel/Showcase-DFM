@@ -2,7 +2,7 @@
 
 ## Navegação
 
-`index.html` apresenta o mod, o catálogo de blocos, as máquinas e os links de download. `guia.html` reúne os 11 capítulos do guia, com busca, receitas, materiais, tabelas e montagem da mineradora.
+`index.html` apresenta o mod, o catálogo de blocos, as máquinas e os links de download. `guia.html` reúne os 12 capítulos do guia, com busca, receitas, materiais, tabelas e montagem da mineradora.
 
 ## Catálogo 3D
 

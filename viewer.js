@@ -99,7 +99,50 @@
       if(phase>=1.65&&phase<2.03)p[1]=111.6*(.5+.5*Math.cos(Math.PI*(phase-1.65)/.38));pose(p);
     }};
   }
-  function build(asset,state='normal',core='basic'){
+  function buildTank(asset,fluids,code=['white','white','white']){
+    const root=meshGroup(asset.models.normal),ownedMaterials=[],ownedGeometries=[];
+    const dual=asset.tank.chambers===2;
+    root.traverse(node=>{if(node.isMesh){if(node.material.transparent)node.renderOrder=2;if(node.material===materials.get('site:tank/empty_stripe')||node.material===materials.get('dimensionalfluxminer:block/dimensional_tank/solid_white'))node.visible=false;}});
+    const chambers=dual?[
+      {volume:[2.3,2.5,2.3,7.65,13.25,13.7],gauge:[2.845833,4.213889,3.1875,12.436111,.7385],stripe:[6.03125,6.59375,6.3125,9.40625]},
+      {volume:[8.35,2.5,2.3,13.7,13.25,13.7],gauge:[12.8125,4.213889,13.154167,12.436111,.7385],stripe:[9.6875,6.59375,9.96875,9.40625]}
+    ]:[{volume:[2.3,2.5,2.3,13.7,13.25,13.7],gauge:[12.8125,4.213889,13.154167,12.436111,.7385]}];
+    const add=(geometry,mat,position,rotation=0)=>{ownedGeometries.push(geometry);const mesh=new T.Mesh(geometry,mat);mesh.position.set(...position.map(v=>v/16));mesh.rotation.x=rotation;mesh.renderOrder=1;root.add(mesh);return mesh;};
+    for(let i=0;i<chambers.length;i++){
+      const chamber=chambers[i],fluid=DATA.tankFluids[fluids[i]],level=.78;
+      let flat;
+      if(fluid){
+        const resource=textures.get(fluid.texture),opts={map:resource.tex,color:fluid.tint,transparent:fluid.opacity<1,opacity:fluid.opacity,depthWrite:fluid.opacity===1,side:T.FrontSide};
+        const mat=fluid.glow?new T.MeshBasicMaterial(opts):new T.MeshStandardMaterial({...opts,roughness:.5,metalness:0});ownedMaterials.push(mat);
+        const [x0,y0,z0,x1,yMax,z1]=chamber.volume,y1=y0+(yMax-y0)*level;
+        add(new T.BoxGeometry((x1-x0)/16,(y1-y0)/16,(z1-z0)/16),mat,[(x0+x1)/2,(y0+y1)/2,(z0+z1)/2]);
+        flat=new T.MeshBasicMaterial({color:fluid.gauge,side:T.DoubleSide});ownedMaterials.push(flat);
+        const [gx0,gy0,gx1,gyMax,gz]=chamber.gauge,gy1=gy0+(gyMax-gy0)*level;
+        add(new T.PlaneGeometry((gx1-gx0)/16,(gy1-gy0)/16),flat,[(gx0+gx1)/2,(gy0+gy1)/2,gz]);
+      }
+      if(chamber.stripe){
+        if(!flat){flat=new T.MeshBasicMaterial({color:0x7a7a7a,side:T.DoubleSide});ownedMaterials.push(flat);}
+        const [x0,z0,x1,z1]=chamber.stripe;
+        add(new T.PlaneGeometry((x1-x0)/16,(z1-z0)/16),flat,[(x0+x1)/2,15.999,(z0+z1)/2],-Math.PI/2);
+      }
+    }
+    const frontCode=dual?
+      [[8.546875,3.0625,9.203125,4.6875,.2385],[7.671875,3.0625,8.328125,4.6875,.2385],[6.796875,3.0625,7.453125,4.6875,.2385]]:
+      [[4.496875,3.0625,5.153125,4.6875,.1885],[3.621875,3.0625,4.278125,4.6875,.1885],[2.746875,3.0625,3.403125,4.6875,.1885]];
+    const lidCode=dual?
+      [[8.46875,7.303571,9.03125,8.696429],[7.71875,7.303571,8.28125,8.696429],[6.96875,7.303571,7.53125,8.696429]]:
+      [[8.546875,7.1875,9.203125,8.8125],[7.671875,7.1875,8.328125,8.8125],[6.796875,7.1875,7.453125,8.8125]];
+    for(let i=0;i<3;i++){
+      const mat=new T.MeshBasicMaterial({color:DATA.tankCodeColors[code[i]]||DATA.tankCodeColors.white,side:T.DoubleSide});ownedMaterials.push(mat);
+      const [x0,y0,x1,y1,z]=frontCode[i],front=add(new T.PlaneGeometry((x1-x0)/16,(y1-y0)/16),mat,[(x0+x1)/2,(y0+y1)/2,z]);
+      front.userData.tankCodePosition=i;front.userData.tankCodeSurface='front';
+      const [lx0,lz0,lx1,lz1]=lidCode[i],lid=add(new T.PlaneGeometry((lx1-lx0)/16,(lz1-lz0)/16),mat,[(lx0+lx1)/2,16.02,(lz0+lz1)/2],-Math.PI/2);
+      lid.userData.tankCodePosition=i;lid.userData.tankCodeSurface='lid';
+    }
+    return {root,animate(){},ownedMaterials,ownedGeometries};
+  }
+  function build(asset,state='normal',core='basic',fluids=['empty','empty'],code=['white','white','white']){
+    if(asset.tank)return buildTank(asset,fluids,code);
     if(asset.kind==='assembly'){
       const root=new T.Group(),pieces=[];
       for(const slot of asset.slots){
@@ -130,10 +173,10 @@
       this.scene.add(new T.HemisphereLight(0xd4eaf5,0x29324b,2.4));const key=new T.DirectionalLight(0xffffff,3.2);key.position.set(-4,7,-5);this.scene.add(key);const rim=new T.DirectionalLight(0xbca8f4,2);rim.position.set(4,4,5);this.scene.add(rim);this.scene.add(new T.AmbientLight(0xffffff,.45));
       this.anchor=new T.Group();this.scene.add(this.anchor);this.resizeObserver=new ResizeObserver(()=>this.resize());this.resizeObserver.observe(container);this.bindControls();this.last=performance.now();this.renderer.setAnimationLoop(now=>this.frame(now));
     }
-    async setAsset(asset,state,core='basic',reset=true){
-      await loadResources();const old=this.model;this.asset=asset;this.state=state;this.core=core;if(old){this.anchor.remove(old.root);for(const m of old.ownedMaterials||[])m.dispose();}
-      this.model=build(asset,state,core);this.anchor.add(this.model.root);this.model.animate(0);this.model.root.updateMatrixWorld(true);
-      this.anchor.position.set(0,0,0);this.anchor.updateMatrixWorld(true);const box=new T.Box3().setFromObject(this.model.root),center=box.getCenter(new T.Vector3()),size=box.getSize(new T.Vector3());this.anchor.position.copy(center).multiplyScalar(-1);this.extent=Math.max(size.x,size.y,size.z);this.baseRadius=this.extent*2.75;this.time=0;
+    async setAsset(asset,state,core='basic',reset=true,fluids=['empty','empty'],code=['white','white','white']){
+      await loadResources();const old=this.model;this.asset=asset;this.state=state;this.core=core;if(old){this.anchor.remove(old.root);for(const m of old.ownedMaterials||[])m.dispose();for(const g of old.ownedGeometries||[])g.dispose();}
+      this.model=build(asset,state,core,fluids,code);this.anchor.add(this.model.root);this.model.animate(0);this.model.root.updateMatrixWorld(true);
+      this.anchor.position.set(0,0,0);this.anchor.updateMatrixWorld(true);const box=new T.Box3().setFromObject(this.model.root),center=box.getCenter(new T.Vector3()),size=box.getSize(new T.Vector3());this.anchor.position.copy(center).multiplyScalar(-1);this.extent=Math.max(size.x,size.y,size.z);this.baseRadius=this.extent*(asset.tank?3.2:2.75);this.time=0;
       this.camera.near=this.baseRadius*.025;this.camera.far=this.baseRadius*12;this.camera.updateProjectionMatrix();
       if(reset)this.home();this.resize();this.render();return this;
     }
@@ -154,8 +197,8 @@
     }
     frame(now){const dt=Math.min(.06,(now-this.last)/1000);this.last=now;if(!this.isOpen||document.hidden||!this.model)return;if(this.playing){this.time+=dt;this.model.animate(this.time);for(const resource of textures.values())resource.update(this.time*20);}if(this.autoRotate){this.theta+=dt*.19;this.moveCamera();}this.render();}
     render(){if(this.container.clientWidth&&this.container.clientHeight)this.renderer.render(this.scene,this.camera);}
-    dispose(){this.isOpen=false;this.resizeObserver.disconnect();this.renderer.setAnimationLoop(null);for(const m of this.model?.ownedMaterials||[])m.dispose();this.renderer.dispose();this.renderer.forceContextLoss();this.canvas.remove();}
-    async snapshot(asset){await this.setAsset(asset,asset.states.includes('idle')?'idle':asset.kind==='book'?'closed':'normal','basic',true);this.radius*=1.23;this.moveCamera();this.model.animate(0);for(const resource of textures.values())resource.update(0);this.render();return this.canvas.toDataURL('image/png');}
+    dispose(){this.isOpen=false;this.resizeObserver.disconnect();this.renderer.setAnimationLoop(null);for(const m of this.model?.ownedMaterials||[])m.dispose();for(const g of this.model?.ownedGeometries||[])g.dispose();this.renderer.dispose();this.renderer.forceContextLoss();this.canvas.remove();}
+    async snapshot(asset){await this.setAsset(asset,asset.states.includes('idle')?'idle':asset.kind==='book'?'closed':'normal','basic',true,asset.tank?['water','lava']:['empty','empty']);this.radius*=1.23;this.moveCamera();this.model.animate(0);for(const resource of textures.values())resource.update(0);this.render();return this.canvas.toDataURL('image/png');}
   }
   window.DFMViewer={Viewer,loadResources,build,textures};
 })();

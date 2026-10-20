@@ -55,3 +55,15 @@ select{background:#1a2a40;border-color:#3b557a;color:#c5d6ed}.inspector[data-kin
 .footer-brand img{background:#151923;border-radius:6px}
 
 .hero-actions{display:flex;align-items:center;flex-wrap:wrap;gap:16px 20px;margin-top:29px}.hero-actions .primary-button{margin-top:0}.hero-actions .guide-link-hero{margin-left:0;white-space:nowrap}.hero-actions .download-hero-link{display:inline-flex;align-items:center;margin-top:0;white-space:nowrap}
+
+.tank-fluid-title{font-size:11px;color:var(--ink);margin-bottom:12px}.tank-chamber+.tank-chamber{margin-top:12px}.tank-chamber label{display:block;margin-bottom:6px}
+
+@media(min-width:761px){.inspector:has(#tank-fluid-section:not([hidden])) .model-info{max-height:min(620px,calc(100dvh - 150px));overflow-y:auto}}
+
+.catalog-grid .asset-card[data-open=dimensional_flux_miner],.catalog-grid:has(.machine-card:nth-child(3)) .asset-card[data-open=dimensional_flux_miner]{grid-column:span 2}@media(min-width:1051px){.catalog-grid:has(.machine-card:nth-child(3)) .asset-card[data-open=dimensional_flux_miner]{grid-column:span 8}}
+
+.catalog-grid .asset-card[data-open=dimensional_flux_miner] .asset-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center}
+
+.catalog-grid .asset-card[data-open=dimensional_flux_miner] .asset-thumb img{transform:translateY(40px) scale(1.65)}.catalog-grid .asset-card[data-open=dimensional_flux_miner]:hover .asset-thumb img{transform:translateY(36px) scale(1.7)}
+
+.tank-code-fields{display:flex;gap:12px}.tank-code-button{width:42px;height:42px;padding:0;border:2px solid #ffffff40;border-radius:4px;box-shadow:inset 0 0 0 2px #0002;transition:border-color .15s,transform .15s}.tank-code-button:hover,.tank-code-button[aria-expanded=true]{border-color:#cdeaf0;transform:translateY(-2px)}.tank-code-palette{position:fixed;z-index:50;display:grid;grid-template-columns:repeat(4,30px);gap:9px;padding:13px;background:#151d2b;border:1px solid #536079;border-radius:7px;box-shadow:0 12px 35px #0008}.tank-code-palette button{width:30px;height:30px;padding:0;border:2px solid #ffffff30;border-radius:3px;box-shadow:inset 0 0 0 1px #0002}.tank-code-palette button:hover{border-color:#fff;transform:scale(1.08)}.tank-code-palette button[aria-checked=true]{outline:2px solid #52d9db;outline-offset:2px}.tank-code-palette button:focus-visible{outline:2px solid #fff;outline-offset:2px}
